@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using BackendWebApi.Database;
 using BackendWebApi.Dataflow;
+using BackendWebApi.Interfaces;
 using BackendWebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,13 +12,15 @@ namespace BackendWebApi.Controllers
     public class AccountController : BaseApiController
     {
         private readonly DataContext _context;
-        public AccountController(DataContext context)
+        private readonly ITokenService _tokenService;
+        public AccountController(DataContext context, ITokenService tokenService)
         {
+            _tokenService = tokenService;
             _context = context;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> RegisterUser(RegisterDataflow registerDataflow)
+        public async Task<ActionResult<UserDataflow>> RegisterUser(RegisterDataflow registerDataflow)
         {
             if (await UserExists(registerDataflow.Username))
             {
@@ -36,11 +39,15 @@ namespace BackendWebApi.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return user;
+            return new UserDataflow
+            {
+                Username = user.UserName,
+                Token = _tokenService.CreateToken(user)
+            };
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<User>> UserLogin(LoginDataflow loginDataflow)
+        public async Task<ActionResult<UserDataflow>> UserLogin(LoginDataflow loginDataflow)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == loginDataflow.Username.ToLower());
 
@@ -61,7 +68,11 @@ namespace BackendWebApi.Controllers
                 }
             }
 
-            return user;
+            return new UserDataflow
+            {
+                Username = user.UserName,
+                Token = _tokenService.CreateToken(user)
+            };
         }
 
         private async Task<bool> UserExists(string username)
