@@ -7,11 +7,15 @@ import { NavigationBarComponent } from './navigation-bar/navigation-bar.componen
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { HomeComponent } from './home/home.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavigationBarComponent
+    NavigationBarComponent,
+    HomeComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserAnimationsModule,

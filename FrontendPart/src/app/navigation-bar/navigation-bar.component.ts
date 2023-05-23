@@ -8,27 +8,26 @@ import { AccountService } from '../_services/account.service';
 })
 export class NavigationBarComponent implements OnInit {
   userData: any = {};
-  loggedIn = false;
+  // currentUser$: Observable<User | null> = of(null);
 
-  constructor (private accountService: AccountService) {
+  constructor (public accountService: AccountService) {
 
   }
   ngOnInit(): void {
-    this.getCurrentUser();
+
   }
 
-  getCurrentUser() {
-    this.accountService.currentUser$.subscribe({
-      next: user => this.loggedIn = !!user,
-      error: error => console.log(error)
-    })
-  }
+  // getCurrentUser() {
+  //   this.accountService.currentUser$.subscribe({
+  //     next: user => this.loggedIn = !!user,
+  //     error: error => console.log(error)
+  //   })
+  // }
 
   login() {
     this.accountService.login(this.userData).subscribe({
       next: respone => {
         console.log(respone);
-        this.loggedIn = true;
       },
       error: error => console.log(error)
     });
@@ -36,7 +35,6 @@ export class NavigationBarComponent implements OnInit {
 
   logout() {
     this.accountService.logout();
-    this.loggedIn = false;
   }
 
 }

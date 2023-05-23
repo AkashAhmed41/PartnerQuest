@@ -11,7 +11,7 @@ namespace BackendWebApi.Database.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<byte[]>(
-                name: "PashwordSalt",
+                name: "PasswordSalt",
                 table: "Users",
                 type: "BLOB",
                 nullable: true);
@@ -27,7 +27,7 @@ namespace BackendWebApi.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "PashwordSalt",
+                name: "PasswordSalt",
                 table: "Users");
 
             migrationBuilder.DropColumn(

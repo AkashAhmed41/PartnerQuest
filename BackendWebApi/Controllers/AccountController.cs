@@ -33,7 +33,7 @@ namespace BackendWebApi.Controllers
             {
                 UserName = registerDataflow.Username.ToLower(),
                 PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDataflow.Password)),
-                PashwordSalt = hmac.Key
+                PasswordSalt = hmac.Key
             };
 
             _context.Users.Add(user);
@@ -56,7 +56,7 @@ namespace BackendWebApi.Controllers
                 return Unauthorized("Invalid Username!");
             }
 
-            using var hmac = new HMACSHA512(user.PashwordSalt);
+            using var hmac = new HMACSHA512(user.PasswordSalt);
 
             var ComputedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDataflow.Password));
 
