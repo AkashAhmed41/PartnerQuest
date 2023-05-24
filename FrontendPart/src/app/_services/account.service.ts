@@ -4,14 +4,14 @@ import { BehaviorSubject, map } from 'rxjs';
 import { User } from '../_models/user';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AccountService {
-  baseUrl = 'https://localhost:7212/api/';
+  baseUrl = 'http://localhost:5137/api/';
   private currentUserSource = new BehaviorSubject<User | null>(null);
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   login(userData: any) {
     return this.http.post<User>(this.baseUrl + 'account/login', userData).pipe(
@@ -23,19 +23,21 @@ export class AccountService {
         }
         // return response;
       })
-    )
+    );
   }
 
   register(userData: any) {
-    return this.http.post<User>(this.baseUrl + 'account/register', userData).pipe(
-      map( user => {
-        if(user) {
-          localStorage.setItem('user', JSON.stringify(user));
-          this.currentUserSource.next(user);
-        }
-        // return user;
-      })
-    )
+    return this.http
+      .post<User>(this.baseUrl + 'account/register', userData)
+      .pipe(
+        map((user) => {
+          if (user) {
+            localStorage.setItem('user', JSON.stringify(user));
+            this.currentUserSource.next(user);
+          }
+          // return user;
+        })
+      );
   }
 
   setCurrentUser(user: User) {
@@ -46,5 +48,4 @@ export class AccountService {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
   }
-
 }
