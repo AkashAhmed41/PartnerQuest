@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit {
   }
 
   getUsers() {
-    this.http.get('https://localhost:7212/api/users').subscribe({
+    this.http.get('http://localhost:5137/api/users').subscribe({
       next: (response) => this.users = response,
       error: (error) => console.log(error),
       complete: () => console.log('Request has been completed!!')
