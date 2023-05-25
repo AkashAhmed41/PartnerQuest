@@ -1,34 +1,35 @@
-using BackendWebApi.Database;
-using BackendWebApi.Models;
+using AutoMapper;
+using BackendWebApi.Dataflow;
+using BackendWebApi.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace BackendWebApi.Controllers
 {
     [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly DataContext _context;
-
-        public UsersController(DataContext context)
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
+        public UsersController(IUserRepository userRepository, IMapper mapper)
         {
-            _context = context;
+            _mapper = mapper;
+            _userRepository = userRepository;
         }
 
-        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MemberDataflow>>> GetAllUsers()
         {
-            var users = await _context.Users.ToListAsync();
-            return users;
+            var users = await _userRepository.GetAllUsersAsync();
+            var usersToReturn = _mapper.Map<IEnumerable<MemberDataflow>>(users);
+            return Ok(usersToReturn);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        [HttpGet("{username}")]
+        public async Task<ActionResult<MemberDataflow>> GetUser(string username)
         {
-            var user = await _context.Users.FindAsync(id);
-            return user;
+            var user = await _userRepository.GetUserByUsernameAsync(username);
+            return _mapper.Map<MemberDataflow>(user);
         }
     }
 }
