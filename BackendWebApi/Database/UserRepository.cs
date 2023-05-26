@@ -1,3 +1,5 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using BackendWebApi.Dataflow;
 using BackendWebApi.Interfaces;
 using BackendWebApi.Models;
@@ -8,8 +10,10 @@ namespace BackendWebApi.Database
     public class UserRepository : IUserRepository
     {
         private readonly DataContext _context;
-        public UserRepository(DataContext context)
+        private readonly IMapper _mapper;
+        public UserRepository(DataContext context, IMapper mapper)
         {
+            _mapper = mapper;
             _context = context;
         }
         public async Task<IEnumerable<User>> GetAllUsersAsync()
@@ -17,14 +21,14 @@ namespace BackendWebApi.Database
             return await _context.Users.Include(p => p.Photos).ToListAsync();
         }
 
-        public Task<MemberDataflow> GetMemberAsync(string username)
+        public async Task<MemberDataflow> GetMemberAsync(string username)
         {
-            throw new NotImplementedException();
+            return await _context.Users.Where(x => x.UserName == username).ProjectTo<MemberDataflow>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
         }
 
-        public Task<IEnumerable<MemberDataflow>> GetMembersAsync()
+        public async Task<IEnumerable<MemberDataflow>> GetMembersAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Users.ProjectTo<MemberDataflow>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public async Task<User> GetUserByIdAsync(int id)
