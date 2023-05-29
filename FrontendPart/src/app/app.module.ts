@@ -19,6 +19,7 @@ import { NotFoundComponent } from './_errors/not-found/not-found.component';
 import { ServerErrorComponent } from './_errors/server-error/server-error.component';
 import { MemberCardComponent } from './members/member-card/member-card.component';
 import { JwtAuthorizerInterceptor } from './_interceptors/jwt-authorizer.interceptor';
+import { EditMemberComponent } from './members/edit-member/edit-member.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { JwtAuthorizerInterceptor } from './_interceptors/jwt-authorizer.interce
     ErrorTestComponent,
     NotFoundComponent,
     ServerErrorComponent,
-    MemberCardComponent
+    MemberCardComponent,
+    EditMemberComponent
   ],
   imports: [
     BrowserAnimationsModule,

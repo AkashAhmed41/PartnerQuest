@@ -9,6 +9,8 @@ import { AuthGuard } from './_guards/auth.guard';
 import { ErrorTestComponent } from './_errors/error-test/error-test.component';
 import { NotFoundComponent } from './_errors/not-found/not-found.component';
 import { ServerErrorComponent } from './_errors/server-error/server-error.component';
+import { EditMemberComponent } from './members/edit-member/edit-member.component';
+import { NavigationPreventingGuard } from './_guards/navigation-preventing.guard';
 
 const routes: Routes = [
   { path: '', component: HomeComponent},
@@ -18,6 +20,7 @@ const routes: Routes = [
     children: [
       { path: 'members', component: MemberListComponent,},
       { path: 'members/:username', component: MemberDetailComponent},
+      { path: ':username/edit', component: EditMemberComponent, canDeactivate: [NavigationPreventingGuard]},
       { path: 'lists', component: ListsComponent},
       { path: 'messages', component: MessagesComponent}
     ]
