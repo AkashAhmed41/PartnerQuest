@@ -19,6 +19,10 @@ export class MembersService {
     return this.http.get<Member>(this.baseUrl + 'users/' + username);
   }
 
+  updateMemberInfo(memberInfo: Member) {
+    return this.http.put(this.baseUrl + 'users', memberInfo);
+  }
+
   // getHttpOptions() {
   //   const userString = localStorage.getItem('user');
   //   if (!userString) return;
