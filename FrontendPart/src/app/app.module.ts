@@ -20,6 +20,7 @@ import { ServerErrorComponent } from './_errors/server-error/server-error.compon
 import { MemberCardComponent } from './members/member-card/member-card.component';
 import { JwtAuthorizerInterceptor } from './_interceptors/jwt-authorizer.interceptor';
 import { EditMemberComponent } from './members/edit-member/edit-member.component';
+import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 
 @NgModule({
   declarations: [
@@ -47,7 +48,8 @@ import { EditMemberComponent } from './members/edit-member/edit-member.component
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: JwtAuthorizerInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: JwtAuthorizerInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
