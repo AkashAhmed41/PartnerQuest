@@ -62,7 +62,10 @@ namespace BackendWebApi.Controllers
             if (user.Photos.Count == 0) photo.IsProfilePhoto = true;
             user.Photos.Add(photo);
 
-            if (await _userRepository.SaveAllAsync()) return _mapper.Map<PhotoDataflow>(photo);
+            if (await _userRepository.SaveAllAsync()) 
+            {
+                return CreatedAtAction(nameof(GetUser), new {username = user.UserName}, _mapper.Map<PhotoDataflow>(photo));
+            }
 
             return BadRequest("A problem occurred while adding your photo!");
         }

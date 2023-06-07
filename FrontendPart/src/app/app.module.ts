@@ -21,6 +21,7 @@ import { MemberCardComponent } from './members/member-card/member-card.component
 import { JwtAuthorizerInterceptor } from './_interceptors/jwt-authorizer.interceptor';
 import { EditMemberComponent } from './members/edit-member/edit-member.component';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
+import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { LoadingInterceptor } from './_interceptors/loading.interceptor';
     NotFoundComponent,
     ServerErrorComponent,
     MemberCardComponent,
-    EditMemberComponent
+    EditMemberComponent,
+    PhotoEditorComponent
   ],
   imports: [
     BrowserAnimationsModule,
