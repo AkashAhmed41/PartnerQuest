@@ -38,6 +38,10 @@ export class MembersService {
     );
   }
 
+  setProfilePhoto(photoId: number) {
+    return this.http.put(this.baseUrl + 'users/set-profile-photo' + photoId, {});
+  }
+
   // getHttpOptions() {
   //   const userString = localStorage.getItem('user');
   //   if (!userString) return;

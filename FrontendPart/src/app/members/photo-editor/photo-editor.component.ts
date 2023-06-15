@@ -5,6 +5,8 @@ import { User } from 'src/app/_models/user';
 import { environment } from 'src/environments/environment';
 import { AccountService } from 'src/app/_services/account.service';
 import { take } from 'rxjs';
+import { MembersService } from 'src/app/_services/members.service';
+import { Photo } from 'src/app/_models/photo';
 
 @Component({
   selector: 'app-photo-editor',
@@ -18,7 +20,7 @@ export class PhotoEditorComponent implements OnInit {
   baseUrl = environment.apiUrl;
   user: User | undefined;
 
-  constructor(private accountService: AccountService) { 
+  constructor(private accountService: AccountService, private memberService: MembersService) { 
     this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: user => {
         if (user) {
@@ -34,6 +36,22 @@ export class PhotoEditorComponent implements OnInit {
 
   fileOverBaseDropZone(e: any) {
     this.hasBaseDropZoneOver = e;
+  }
+
+  setProfilePhoto(photo: Photo) {
+    this.memberService.setProfilePhoto(photo.id).subscribe({
+      next: () => {
+        if (this.user && this.member) {
+          this.user.photoUrl = photo.photoUrl;
+          this.accountService.setCurrentUser(this.user);
+          this.member.profilePhotoUrl = photo.photoUrl;
+          this.member.photos.forEach(p => {
+            if (p.isProfilePhoto) p.isProfilePhoto = false;
+            if (p.id === photo.id) p.isProfilePhoto = true;
+          })
+        }
+      }
+    })
   }
 
   initializeUploader() {

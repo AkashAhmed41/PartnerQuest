@@ -49,7 +49,7 @@ namespace BackendWebApi.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDataflow>> UserLogin(LoginDataflow loginDataflow)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == loginDataflow.Username.ToLower());
+            var user = await _context.Users.Include(user => user.Photos).SingleOrDefaultAsync(x => x.UserName == loginDataflow.Username.ToLower());
 
             if (user == null)
             {
@@ -71,7 +71,8 @@ namespace BackendWebApi.Controllers
             return new UserDataflow
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsProfilePhoto)?.PhotoUrl
             };
         }
 

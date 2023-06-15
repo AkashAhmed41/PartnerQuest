@@ -69,5 +69,24 @@ namespace BackendWebApi.Controllers
 
             return BadRequest("A problem occurred while adding your photo!");
         }
+
+        [HttpPut("set-profile-photo/{photoId}")]
+        public async Task<ActionResult> SettingProfilePhoto(int photoId)
+        {
+            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+            if (user == null) return NotFound();
+
+            var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
+            if (photo == null) return NotFound();
+
+            if (photo.IsProfilePhoto) return BadRequest("The selected photo is already your Profile Photo!");
+            
+            var currentProfilePhoto = user.Photos.FirstOrDefault(x => x.IsProfilePhoto);
+            if (currentProfilePhoto != null) currentProfilePhoto.IsProfilePhoto = false;
+            photo.IsProfilePhoto = true;
+
+            if (await _userRepository.SaveAllAsync()) return NoContent();
+            return BadRequest("An unknown problem occurred while setting up your Profile Photo!");
+        }
     }
 }
