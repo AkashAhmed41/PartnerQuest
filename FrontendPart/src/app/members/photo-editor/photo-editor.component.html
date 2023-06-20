@@ -9,7 +9,12 @@
                 [ngClass]="photo.isProfilePhoto ? 'btn-success active' : 'btn-outline-success'">
                 Set Profile
             </button>
-            <button class="btn btn-sm btn-danger mb-1"><i class="fa fa-trash"></i></button>
+            <button 
+                class="btn btn-sm btn-danger mb-1"
+                [disabled]="photo.isProfilePhoto"
+                (click)="deletePhoto(photo.id)">
+                <i class="fa fa-trash"></i>
+            </button>
         </div>
     </div>
 </div>

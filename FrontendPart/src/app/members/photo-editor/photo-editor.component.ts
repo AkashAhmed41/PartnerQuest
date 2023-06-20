@@ -7,6 +7,7 @@ import { AccountService } from 'src/app/_services/account.service';
 import { take } from 'rxjs';
 import { MembersService } from 'src/app/_services/members.service';
 import { Photo } from 'src/app/_models/photo';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-photo-editor',
@@ -20,7 +21,7 @@ export class PhotoEditorComponent implements OnInit {
   baseUrl = environment.apiUrl;
   user: User | undefined;
 
-  constructor(private accountService: AccountService, private memberService: MembersService) { 
+  constructor(private accountService: AccountService, private memberService: MembersService, private toastr: ToastrService) { 
     this.accountService.currentUser$.pipe(take(1)).subscribe({
       next: user => {
         if (user) {
@@ -50,6 +51,18 @@ export class PhotoEditorComponent implements OnInit {
             if (p.id === photo.id) p.isProfilePhoto = true;
           })
         }
+        this.toastr.success('The photo has successfully been set as your profile photo!');
+      }
+    })
+  }
+
+  deletePhoto(photoId: number) {
+    this.memberService.deletePhoto(photoId).subscribe({
+      next: () => {
+        if (this.member) {
+          this.member.photos = this.member.photos.filter(x => x.id !== photoId);
+        }
+        this.toastr.success('The photo has successfully been removed!');
       }
     })
   }
