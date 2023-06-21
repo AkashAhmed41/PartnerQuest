@@ -3,22 +3,31 @@
     <hr>
     <div class="mb-3">
         <input type="text"
+            [class.is-invalid]="registerForm.get('username')?.errors && registerForm.get('username')?.touched"
             class="form-control"
             formControlName="username"
             placeholder="Username">
+        <div class="invalid-feedback">Please enter a username</div>
     </div>
     
     <div class="mb-3">
         <input type="password"
+            [class.is-invalid]="registerForm.get('password')?.errors && registerForm.get('password')?.touched"
             class="form-control"
             formControlName="password"
             placeholder="Password">
+        <div class="invalid-feedback" *ngIf="registerForm.get('password')?.hasError('required')">Please enter a password</div>
+        <div class="invalid-feedback" *ngIf="registerForm.get('password')?.hasError('minlength')">Password must be at least 4 characters</div>
+        <div class="invalid-feedback" *ngIf="registerForm.get('password')?.hasError('maxlength')">Password can be at most 8 characters</div>
     </div>
     <div class="mb-3">
         <input type="password"
+            [class.is-invalid]="registerForm.get('confirmPassword')?.errors && registerForm.get('confirmPassword')?.touched"
             class="form-control"
             formControlName="confirmPassword"
             placeholder="Confirm Password">
+        <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.hasError('required')">Please confirm your password</div>
+        <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.hasError('notMatching')">Passwords didn't match</div>
     </div>
     <div class="text-center">
         <button class="btn btn-success me-3" type="submit">Register</button>
