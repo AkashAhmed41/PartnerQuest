@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using AutoMapper;
 using BackendWebApi.Database;
 using BackendWebApi.Dataflow;
 using BackendWebApi.Interfaces;
@@ -13,8 +14,10 @@ namespace BackendWebApi.Controllers
     {
         private readonly DataContext _context;
         private readonly ITokenService _tokenService;
-        public AccountController(DataContext context, ITokenService tokenService)
+        private readonly IMapper _mapper;
+        public AccountController(DataContext context, ITokenService tokenService, IMapper mapper)
         {
+            _mapper = mapper;
             _tokenService = tokenService;
             _context = context;
         }
@@ -27,14 +30,13 @@ namespace BackendWebApi.Controllers
                 return BadRequest("Username is already taken!");
             }
 
+            var user = _mapper.Map<User>(registerDataflow);
+
             using var hmac = new HMACSHA512();
 
-            var user = new User 
-            {
-                UserName = registerDataflow.Username.ToLower(),
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDataflow.Password)),
-                PasswordSalt = hmac.Key
-            };
+            user.UserName = registerDataflow.Username.ToLower();
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDataflow.Password));
+            user.PasswordSalt = hmac.Key;
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -42,7 +44,8 @@ namespace BackendWebApi.Controllers
             return new UserDataflow
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                Nickname = user.Nickname
             };
         }
 
@@ -72,7 +75,8 @@ namespace BackendWebApi.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsProfilePhoto)?.PhotoUrl
+                PhotoUrl = user.Photos.FirstOrDefault(x => x.IsProfilePhoto)?.PhotoUrl,
+                Nickname = user.Nickname
             };
         }
 

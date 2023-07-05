@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AccountService } from '../_services/account.service';
-import { ToastrService } from 'ngx-toastr';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -10,11 +10,11 @@ import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from
 })
 export class RegisterComponent implements OnInit {
   @Output() cancelRegister = new EventEmitter();
-  userData: any = {};
   registerForm: FormGroup = new FormGroup({});
   maxDate: Date = new Date();
+  validationErrors: string[] | undefined;
 
-  constructor(private accountService: AccountService, private toastr: ToastrService, private formBuilder: FormBuilder) {}
+  constructor(private accountService: AccountService, private formBuilder: FormBuilder, private router: Router) {}
 
   ngOnInit(): void {
     this.formInitializer();
@@ -46,22 +46,27 @@ export class RegisterComponent implements OnInit {
   }
 
   register() {
-    console.log(this.registerForm?.value);
+    const extractedDate = this.extractDateOnly(this.registerForm.controls['dateOfBirth'].value);
+    const formValues = {...this.registerForm.value, dateOfBirth: extractedDate};
     
-    // this.accountService.register(this.userData).subscribe({
-    //   next: () => {
-    //     // console.log(response);
-    //     this.cancel();
-    //   },
-    //   error: error => {
-    //     console.log(error);
-    //     this.toastr.error(error.error);
-    //   }
-    // });
+    this.accountService.register(formValues).subscribe({
+      next: () => {
+        this.router.navigateByUrl('/members');
+      },
+      error: error => {
+        this.validationErrors = error;
+      }
+    });
   }
 
   cancel() {
     this.cancelRegister.emit(false);
+  }
+
+  private extractDateOnly(longDobOfForm: string | undefined) {
+    if (!longDobOfForm) return;
+    let theObjectDob = new Date(longDobOfForm);
+    return new Date(theObjectDob.setMinutes(theObjectDob.getMinutes() - theObjectDob.getTimezoneOffset())).toISOString().slice(0, 10);
   }
 
 }
