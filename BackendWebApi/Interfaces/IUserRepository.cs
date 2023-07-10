@@ -1,4 +1,5 @@
 using BackendWebApi.Dataflow;
+using BackendWebApi.Helpers;
 using BackendWebApi.Models;
 
 namespace BackendWebApi.Interfaces
@@ -10,7 +11,7 @@ namespace BackendWebApi.Interfaces
         Task <IEnumerable<User>> GetAllUsersAsync();
         Task <User> GetUserByIdAsync(int id);
         Task <User> GetUserByUsernameAsync(string username);
-        Task <IEnumerable<MemberDataflow>> GetMembersAsync();
+        Task <PaginatedList<MemberDataflow>> GetMembersAsync(UserParamsForPagination userParamsForPagination);
         Task <MemberDataflow> GetMemberAsync(string username);
     }
 }

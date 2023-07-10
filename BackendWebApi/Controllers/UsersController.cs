@@ -1,6 +1,7 @@
 using AutoMapper;
 using BackendWebApi.Dataflow;
 using BackendWebApi.Extensions;
+using BackendWebApi.Helpers;
 using BackendWebApi.Interfaces;
 using BackendWebApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -22,9 +23,11 @@ namespace BackendWebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MemberDataflow>>> GetAllUsers()
+        public async Task<ActionResult<PaginatedList<MemberDataflow>>> GetAllUsers([FromQuery]UserParamsForPagination userParamsForPagination)
         {
-            return Ok(await _userRepository.GetMembersAsync());
+            var users = await _userRepository.GetMembersAsync(userParamsForPagination);
+            Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
+            return Ok(users);
         }
 
         [HttpGet("{username}")]

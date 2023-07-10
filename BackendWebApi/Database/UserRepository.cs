@@ -1,6 +1,7 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using BackendWebApi.Dataflow;
+using BackendWebApi.Helpers;
 using BackendWebApi.Interfaces;
 using BackendWebApi.Models;
 using Microsoft.EntityFrameworkCore;
@@ -26,9 +27,10 @@ namespace BackendWebApi.Database
             return await _context.Users.Where(x => x.UserName == username).ProjectTo<MemberDataflow>(_mapper.ConfigurationProvider).SingleOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<MemberDataflow>> GetMembersAsync()
+        public async Task<PaginatedList<MemberDataflow>> GetMembersAsync(UserParamsForPagination userParamsForPagination)
         {
-            return await _context.Users.ProjectTo<MemberDataflow>(_mapper.ConfigurationProvider).ToListAsync();
+            var query = _context.Users.ProjectTo<MemberDataflow>(_mapper.ConfigurationProvider).AsNoTracking();
+            return await PaginatedList<MemberDataflow>.CreatePageAsync(query, userParamsForPagination.pageNumber, userParamsForPagination.PageSize);
         }
 
         public async Task<User> GetUserByIdAsync(int id)
