@@ -45,7 +45,8 @@ namespace BackendWebApi.Controllers
             {
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                Nickname = user.Nickname
+                Nickname = user.Nickname,
+                Gender = user.Gender
             };
         }
 
@@ -76,7 +77,8 @@ namespace BackendWebApi.Controllers
                 Username = user.UserName,
                 Token = _tokenService.CreateToken(user),
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsProfilePhoto)?.PhotoUrl,
-                Nickname = user.Nickname
+                Nickname = user.Nickname,
+                Gender = user.Gender
             };
         }
 

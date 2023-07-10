@@ -29,8 +29,17 @@ namespace BackendWebApi.Database
 
         public async Task<PaginatedList<MemberDataflow>> GetMembersAsync(UserParamsForPagination userParamsForPagination)
         {
-            var query = _context.Users.ProjectTo<MemberDataflow>(_mapper.ConfigurationProvider).AsNoTracking();
-            return await PaginatedList<MemberDataflow>.CreatePageAsync(query, userParamsForPagination.pageNumber, userParamsForPagination.PageSize);
+            var query = _context.Users.AsQueryable();
+
+            query = query.Where(u => u.UserName != userParamsForPagination.CurrentUsername);
+            query = query.Where(u => u.Gender == userParamsForPagination.Gender);
+
+            var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParamsForPagination.MaxAge - 1));
+            var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParamsForPagination.MinAge));
+
+            query = query.Where(u => u.DateOfBirth <= maxDob && u.DateOfBirth >= minDob);
+
+            return await PaginatedList<MemberDataflow>.CreatePageAsync(query.AsNoTracking().ProjectTo<MemberDataflow>(_mapper.ConfigurationProvider), userParamsForPagination.pageNumber, userParamsForPagination.PageSize);
         }
 
         public async Task<User> GetUserByIdAsync(int id)

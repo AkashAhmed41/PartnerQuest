@@ -9,7 +9,7 @@
         [boundaryLinks]="true" 
         [totalItems]="pagination.totalItems"
         [itemsPerPage]="pagination.itemsPerPage"
-        [maxSize]="5"
+        [maxSize]="pagination.totalPages"
         [(ngModel)]="pagination.currentPage"
         (pageChanged)="pageChanged($event)"
         previousText="&lsaquo;"

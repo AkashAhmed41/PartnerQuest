@@ -24,7 +24,7 @@
             <div class="rounded-image-container">
               <img src="{{user.photoUrl || './assets/user.png'}}" alt="User Photo" class="round-image">
             </div>
-            <span class="ms-2">Welcome {{user.username | titlecase}}</span>
+            <span class="ms-2">Welcome {{user.nickname}}</span>
           </a>
           <div class="dropdown-menu mt-4" *dropdownMenu>
             <a class="dropdown-item" routerLink="/{{user.username}}/edit">Edit Profile</a>

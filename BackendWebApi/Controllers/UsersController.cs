@@ -25,6 +25,14 @@ namespace BackendWebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<PaginatedList<MemberDataflow>>> GetAllUsers([FromQuery]UserParamsForPagination userParamsForPagination)
         {
+            var currentUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+            userParamsForPagination.CurrentUsername = currentUser.UserName;
+
+            if (string.IsNullOrEmpty(userParamsForPagination.Gender))
+            {
+                userParamsForPagination.Gender = (currentUser.Gender == "male" ? "female" : "male");
+            }
+
             var users = await _userRepository.GetMembersAsync(userParamsForPagination);
             Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
             return Ok(users);
