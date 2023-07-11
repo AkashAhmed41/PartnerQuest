@@ -3,7 +3,7 @@
 </div>
 
 <div class="container mt-3" *ngIf="userParams">
-    <form #form="ngForm" class="d-flex mb-3" (ngSubmit)="loadMembers()" autocomplete="off">
+    <form #form="ngForm" class="d-flex mb-4" (ngSubmit)="loadMembers()" autocomplete="off">
         <div class="d-flex mx-2">
             <label class="col-form-label">Preferred age range:</label>
             <input type="number"
@@ -22,6 +22,18 @@
                 [(ngModel)]="userParams.maxAge"
             >
         </div>
+
+        <div class="d-flex px-2">
+            <label class="col-form-label me-2">Show: </label>
+            <select name="gender" style="width: 130px;" class="form-select ms-1" [(ngModel)]="userParams.gender">
+                <option *ngFor="let gender of genderList" [value]="gender.value">
+                    {{ gender.displayText }}
+                </option>
+            </select>
+        </div>
+
+        <button class="btn btn-primary ms-1" type="submit">Apply Filters</button>
+        <button class="btn btn-info ms-2" type="submit" (click)="resettingFilters()">Reset Filters</button>
     </form>
 </div>
 

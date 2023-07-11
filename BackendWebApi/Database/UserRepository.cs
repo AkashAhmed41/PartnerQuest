@@ -39,6 +39,12 @@ namespace BackendWebApi.Database
 
             query = query.Where(u => u.DateOfBirth <= maxDob && u.DateOfBirth >= minDob);
 
+            query = userParamsForPagination.OrderBy switch
+            {
+                "created" => query.OrderByDescending(u => u.Created),
+                _ => query.OrderByDescending(u => u.LastActive)
+            };
+
             return await PaginatedList<MemberDataflow>.CreatePageAsync(query.AsNoTracking().ProjectTo<MemberDataflow>(_mapper.ConfigurationProvider), userParamsForPagination.pageNumber, userParamsForPagination.PageSize);
         }
 
