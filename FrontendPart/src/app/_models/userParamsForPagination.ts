@@ -5,7 +5,7 @@ export class UserParamsForPagination {
     itemsPerPage = 5;
     gender: string;
     minAge = 18;
-    maxAge = 100;
+    maxAge = 99;
 
     constructor (user: User) {
         this.gender = user.gender === 'male' ? 'female' : 'male';
