@@ -2,7 +2,7 @@ import { User } from "./user";
 
 export class UserParamsForPagination {
     pageNumber = 1;
-    itemsPerPage = 5;
+    itemsPerPage = 3;
     gender: string;
     minAge = 18;
     maxAge = 99;
