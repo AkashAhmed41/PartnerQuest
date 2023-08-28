@@ -22,6 +22,7 @@ namespace BackendWebApi.Extensions
             services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<TrackUserActivity>();
+            services.AddScoped<IFavouriteRepository, FavouriteRepository>();
 
             return services;
         }
