@@ -1,1 +1,45 @@
-<p>lists works!</p>
+<div class="text-center mt-3">
+    <h2>{{predicate === 'loved' ? "User's you added as Favourite" : "User's who added you as Favourite"}}</h2>
+</div>
+
+<div class="container mt-3">
+    <div class="d-flex justify-content-center">
+        <div class="btn-group  text-center" name="predicate">
+            <button class="btn btn-primary me-1" btnRadio="loved" [(ngModel)]="predicate" (click)="loadFavouriteList()"
+                [class.active-button]="predicate === 'loved'">
+                Your Favourite Users
+            </button>
+            <button class="btn btn-primary" btnRadio="lovedBy" [(ngModel)]="predicate" (click)="loadFavouriteList()"
+                [class.active-button]="predicate === 'lovedBy'">
+                Reverse User's List
+            </button>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-2" *ngFor="let member of members">
+            <app-member-card [member]="member"></app-member-card>
+        </div>
+    </div>
+</div>
+
+<div class="text-center" *ngIf="members?.length === 0">
+    <h5>{{predicate === 'loved' ? "You haven't added any Favourite User yet!" : "Noone has added you as a Favourite User yet!"}}</h5>
+</div>
+
+<div *ngIf="members?.length !== 0">
+    <div class="d-flex justify-content-center" *ngIf="pagination">
+        <pagination 
+            [boundaryLinks]="true" 
+            [totalItems]="pagination.totalItems"
+            [itemsPerPage]="pagination.itemsPerPage"
+            [maxSize]="pagination.totalPages"
+            [(ngModel)]="pagination.currentPage"
+            (pageChanged)="pageChanged($event)"
+            previousText="&lsaquo;"
+            nextText="&rsaquo;" 
+            firstText="&laquo;" 
+            lastText="&raquo;">
+        </pagination>
+    </div>
+</div>

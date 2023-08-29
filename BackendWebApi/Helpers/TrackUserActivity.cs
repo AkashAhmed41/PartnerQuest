@@ -14,7 +14,7 @@ public class TrackUserActivity : IAsyncActionFilter
 
         var userId = resultContext.HttpContext.User.GetUserId();
         var userRepository = resultContext.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
-        var user = await userRepository.GetUserByIdAsync(int.Parse(userId));
+        var user = await userRepository.GetUserByIdAsync(userId);
         user.LastActive = DateTime.UtcNow;
         await userRepository.SaveAllAsync();
     }

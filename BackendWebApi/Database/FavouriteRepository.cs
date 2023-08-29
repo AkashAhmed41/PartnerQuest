@@ -3,6 +3,7 @@ using BackendWebApi.Interfaces;
 using BackendWebApi.Models;
 using BackendWebApi.Extensions;
 using Microsoft.EntityFrameworkCore;
+using BackendWebApi.Helpers;
 
 namespace BackendWebApi.Database;
 
@@ -19,24 +20,24 @@ public class FavouriteRepository : IFavouriteRepository
         return await _context.FavouriteUsersDb.FindAsync(sourceUserId, favouriteUserId);
     }
 
-    public async Task<IEnumerable<FavouriteDataflow>> GetFavouriteUsersList(string predicate, int userId)
+    public async Task<PaginatedList<FavouriteDataflow>> GetFavouriteUsersList(FavouritesPaginationParams favouritesPaginationParams)
     {
         var users = _context.Users.OrderBy(u => u.UserName).AsQueryable();
         var favourites = _context.FavouriteUsersDb.AsQueryable();
 
-        if (predicate == "loved")       //here loved means added favourite
+        if (favouritesPaginationParams.Predicate == "loved")       //here loved means added favourite
         {
-            favourites = favourites.Where(fav => fav.SourceUserId == userId);
+            favourites = favourites.Where(fav => fav.SourceUserId == favouritesPaginationParams.UserId);
             users = favourites.Select(fav => fav.FavouriteUser);        //here we're getting the favourite users of a sourceuser
         }
 
-        if (predicate == "lovedBy")       //here lovedBy means added favourite by
+        if (favouritesPaginationParams.Predicate == "lovedBy")       //here lovedBy means added favourite by
         {
-            favourites = favourites.Where(fav => fav.FavouriteUserId == userId);
+            favourites = favourites.Where(fav => fav.FavouriteUserId == favouritesPaginationParams.UserId);
             users = favourites.Select(fav => fav.SourceUser);        //here we're getting the users who have added a sourceuser as favourite
         }
 
-        return await users.Select(user => new FavouriteDataflow
+        var favouriteUsers = users.Select(user => new FavouriteDataflow
         {
             Id = user.Id,
             UserName = user.UserName,
@@ -44,7 +45,9 @@ public class FavouriteRepository : IFavouriteRepository
             Nickname = user.Nickname,
             Age = user.DateOfBirth.CalculateAge(),
             City = user.City
-        }).ToListAsync();
+        });
+
+        return await PaginatedList<FavouriteDataflow>.CreatePageAsync(favouriteUsers, favouritesPaginationParams.PageNumber, favouritesPaginationParams.PageSize);
     }
 
     public async Task<User> GetUserWithFavourite(int userId)

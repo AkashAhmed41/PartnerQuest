@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using BackendWebApi.Extensions;
 using BackendWebApi.Models;
 using BackendWebApi.Dataflow;
+using BackendWebApi.Helpers;
 
 namespace BackendWebApi.Controllers;
 
@@ -19,7 +20,7 @@ public class FavouritesController : BaseApiController
     [HttpPost("{username}")]
     public async Task<ActionResult> AddFavourite(string username)
     {
-        var sourceUserId = int.Parse(User.GetUserId());
+        var sourceUserId = User.GetUserId();
         var addedFavouriteUser = await _userRepository.GetUserByUsernameAsync(username);
         var sourceUser = await _favouriteRepository.GetUserWithFavourite(sourceUserId);
 
@@ -42,9 +43,12 @@ public class FavouritesController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<FavouriteDataflow>>> GetFavouriteUserList(string predicate)
+    public async Task<ActionResult<PaginatedList<FavouriteDataflow>>> GetFavouriteUserList([FromQuery]FavouritesPaginationParams favouritesPaginationParams)
     {
-        var users = await _favouriteRepository.GetFavouriteUsersList(predicate, int.Parse(User.GetUserId()));
+        favouritesPaginationParams.UserId = User.GetUserId();
+        var users = await _favouriteRepository.GetFavouriteUsersList(favouritesPaginationParams);
+
+        Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
 
         return Ok(users);
     }

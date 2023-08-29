@@ -44,7 +44,8 @@
                     name="orderBy"
                     [(ngModel)]="userParams.orderBy"
                     btnRadio="lastActive"
-                    (click)="loadMembers()">
+                    (click)="loadMembers()"
+                    [class.active-button]="userParams.orderBy === 'lastActive'">
                     Recently Active
                 </button>
                 <button 
@@ -53,7 +54,8 @@
                     name="orderBy"
                     [(ngModel)]="userParams.orderBy"
                     btnRadio="created"
-                    (click)="loadMembers()">
+                    (click)="loadMembers()"
+                    [class.active-button]="userParams.orderBy === 'created'">
                     Newest Member
                 </button>
             </div>

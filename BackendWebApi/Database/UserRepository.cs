@@ -45,7 +45,7 @@ namespace BackendWebApi.Database
                 _ => query.OrderByDescending(u => u.LastActive)
             };
 
-            return await PaginatedList<MemberDataflow>.CreatePageAsync(query.AsNoTracking().ProjectTo<MemberDataflow>(_mapper.ConfigurationProvider), userParamsForPagination.pageNumber, userParamsForPagination.PageSize);
+            return await PaginatedList<MemberDataflow>.CreatePageAsync(query.AsNoTracking().ProjectTo<MemberDataflow>(_mapper.ConfigurationProvider), userParamsForPagination.PageNumber, userParamsForPagination.PageSize);
         }
 
         public async Task<User> GetUserByIdAsync(int id)
