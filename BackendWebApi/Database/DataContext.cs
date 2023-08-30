@@ -11,6 +11,7 @@ namespace BackendWebApi.Database
 
         public DbSet<User> Users { get; set; }
         public DbSet<FavouriteUsers> FavouriteUsersDb { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,6 +30,16 @@ namespace BackendWebApi.Database
                 .WithMany(u => u.AddedFavouriteBy)
                 .HasForeignKey(f => f.FavouriteUserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Message>()
+                .HasOne(u => u.Sender)
+                .WithMany(msg => msg.MessagesSent)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Message>()
+                .HasOne(u => u.Recipient)
+                .WithMany(msg => msg.MessagesReceived)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

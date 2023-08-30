@@ -30,7 +30,7 @@ namespace BackendWebApi.Controllers
 
             if (string.IsNullOrEmpty(userParamsForPagination.Gender))
             {
-                userParamsForPagination.Gender = (currentUser.Gender == "male" ? "female" : "male");
+                userParamsForPagination.Gender = currentUser.Gender == "male" ? "female" : "male";
             }
 
             var users = await _userRepository.GetMembersAsync(userParamsForPagination);

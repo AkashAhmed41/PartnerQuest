@@ -23,6 +23,7 @@ namespace BackendWebApi.Extensions
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<TrackUserActivity>();
             services.AddScoped<IFavouriteRepository, FavouriteRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
 
             return services;
         }

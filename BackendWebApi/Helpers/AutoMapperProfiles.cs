@@ -15,6 +15,9 @@ namespace BackendWebApi.Helpers
             CreateMap<Photo, PhotoDataflow>();
             CreateMap<EditMemberInfoDataflow, User>();
             CreateMap<RegisterDataflow, User>();
+            CreateMap<Message, MessageDataflow>()
+                .ForMember(dest => dest.SenderProfilePhotoUrl, opt => opt.MapFrom(src => src.Sender.Photos.FirstOrDefault(x => x.IsProfilePhoto).PhotoUrl))
+                .ForMember(d => d.RecipientProfilePhotoUrl, o => o.MapFrom(s => s.Recipient.Photos.FirstOrDefault(p => p.IsProfilePhoto).PhotoUrl));
         }
     }
 }
