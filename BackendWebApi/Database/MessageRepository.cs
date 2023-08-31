@@ -1,15 +1,20 @@
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using BackendWebApi.Dataflow;
 using BackendWebApi.Helpers;
 using BackendWebApi.Interfaces;
 using BackendWebApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BackendWebApi.Database;
 
 public class MessageRepository : IMessageRepository
 {
     private readonly DataContext _context;
-    public MessageRepository(DataContext context)
+    private readonly IMapper _mapper;
+    public MessageRepository(DataContext context, IMapper mapper)
     {
+        _mapper = mapper;
         _context = context;
         
     }
@@ -28,14 +33,38 @@ public class MessageRepository : IMessageRepository
         return await _context.Messages.FindAsync(id);
     }
 
-    public Task<IEnumerable<MessageDataflow>> GetMessagesThread(int currentUserId, int recipientId)
+    public async Task<IEnumerable<MessageDataflow>> GetMessagesThread(string currentUsername, string recipientUsername)
     {
-        throw new NotImplementedException();
+        var messages = await _context.Messages.Include(msg => msg.Sender).ThenInclude(u => u.Photos).Where(msg => 
+            msg.SenderUsername == currentUsername && msg.RecipientUsername == recipientUsername ||
+            msg.RecipientUsername == currentUsername && msg.SenderUsername == recipientUsername
+        ).OrderByDescending(msg => msg.MessageSent).ToListAsync();
+
+        var unreadMessages = messages.Where(msg => msg.MessageRead == null && msg.RecipientUsername == currentUsername).ToList();
+        if (unreadMessages.Any())
+        {
+            foreach (var message in unreadMessages)
+            {
+                message.MessageRead = DateTime.UtcNow;
+            }
+            await _context.SaveChangesAsync();
+        }
+        
+        return _mapper.Map<IEnumerable<MessageDataflow>>(messages);
     }
 
-    public Task<PaginatedList<MessageDataflow>> GetUsersMessages()
+    public async Task<PaginatedList<MessageDataflow>> GetUsersMessages(MessagesPaginationParams messagesPaginationParams)
     {
-        throw new NotImplementedException();
+        var query = _context.Messages.OrderByDescending(msg => msg.MessageSent).AsQueryable();
+        query = messagesPaginationParams.Container switch
+        {
+            "Inbox" => query.Where(msg => msg.RecipientUsername == messagesPaginationParams.Username),
+            "Outbox" => query.Where(msg => msg.SenderUsername == messagesPaginationParams.Username),
+            _ => query.Where(msg => msg.RecipientUsername == messagesPaginationParams.Username && msg.MessageRead == null)
+        };
+
+        var messages = query.ProjectTo<MessageDataflow>(_mapper.ConfigurationProvider);
+        return await PaginatedList<MessageDataflow>.CreatePageAsync(messages, messagesPaginationParams.PageNumber, messagesPaginationParams.PageSize);
     }
 
     public async Task<bool> SaveAllAsync()

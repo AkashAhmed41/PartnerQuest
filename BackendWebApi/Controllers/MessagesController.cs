@@ -4,6 +4,7 @@ using BackendWebApi.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using BackendWebApi.Extensions;
 using BackendWebApi.Models;
+using BackendWebApi.Helpers;
 
 namespace BackendWebApi.Controllers;
 
@@ -43,5 +44,22 @@ public class MessagesController : BaseApiController
         if (await _messageRepository.SaveAllAsync()) return Ok(_mapper.Map<MessageDataflow>(message));
 
         return BadRequest("Failed to send message!");
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<PaginatedList<MessageDataflow>>> GetUsersMessages([FromQuery]MessagesPaginationParams messagesPaginationParams)
+    {
+        messagesPaginationParams.Username = User.GetUsername();
+        var messages = await _messageRepository.GetUsersMessages(messagesPaginationParams);
+        
+        Response.AddPaginationHeader(new PaginationHeader(messages.CurrentPage, messages.PageSize, messages.TotalCount, messages.TotalPages));
+        return messages;
+    }
+
+    [HttpGet("thread/{username}")]
+    public async Task<ActionResult<IEnumerable<MessageDataflow>>> GetMessagesThread(string username)
+    {
+        var currentUsername = User.GetUsername();
+        return Ok(await _messageRepository.GetMessagesThread(currentUsername, username));
     }
 }
