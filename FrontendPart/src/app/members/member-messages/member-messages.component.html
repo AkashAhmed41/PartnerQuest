@@ -1,7 +1,7 @@
 <div class="card">
     <div class="card-body">
         <div *ngIf="messages.length === 0">
-            No Messages! Start conversation using the Message Box below...
+            <strong>No Messages yet! Start a conversation using the Message Box below...</strong>
         </div>
 
         <ul *ngIf="messages.length > 0" class="chat">
@@ -33,11 +33,17 @@
         </ul>
     </div>
     <div class="card-footer">
-        <form>
+        <form #messageForm="ngForm" (ngSubmit)="sendMessage()" autocomplete="off">
             <div class="input-group">
-                <input type="text" class="form-control input-sm" placeholder="Send a private message...">
+                <input 
+                    name="messageContent"
+                    required
+                    [(ngModel)]="messageContent"
+                    type="text" 
+                    class="form-control input-sm" 
+                    placeholder="Send a private message...">
                 <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">Send</button>
+                    <button class="btn btn-primary ms-1" type="submit" [disabled]="!messageForm.valid">Send</button>
                 </div>
             </div>
         </form>

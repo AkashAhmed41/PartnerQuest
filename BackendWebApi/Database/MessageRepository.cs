@@ -38,7 +38,7 @@ public class MessageRepository : IMessageRepository
         var messages = await _context.Messages.Include(msg => msg.Sender).ThenInclude(u => u.Photos).Where(msg => 
             msg.SenderUsername == currentUsername && msg.RecipientUsername == recipientUsername ||
             msg.RecipientUsername == currentUsername && msg.SenderUsername == recipientUsername
-        ).OrderByDescending(msg => msg.MessageSent).ToListAsync();
+        ).OrderBy(msg => msg.MessageSent).ToListAsync();
 
         var unreadMessages = messages.Where(msg => msg.MessageRead == null && msg.RecipientUsername == currentUsername).ToList();
         if (unreadMessages.Any())

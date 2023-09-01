@@ -16,7 +16,7 @@
 </div>
 
 <div class="row" *ngIf="!messages || messages.length === 0">
-    <h3>No Unread Messages for You!</h3>
+    <h3>No Messages here for You!</h3>
 </div>
 
 <div class="row" *ngIf="messages && messages.length > 0">
@@ -24,14 +24,15 @@
         <thead>
             <tr>
                 <th style="width: 40%; text-transform: capitalize; font-weight: bold;">Messages</th>
-                <th style="width: 20%; text-transform: capitalize; font-weight: bold;">From / To</th>
-                <th style="width: 20%; text-transform: capitalize; font-weight: bold;">Sent / Received</th>
+                <th style="width: 20%; text-transform: capitalize; font-weight: bold;">{{container === 'Outbox' ? 'To' : 'From'}}</th>
+                <th style="width: 20%; text-transform: capitalize; font-weight: bold;">{{container === 'Outbox' ? 'Sent' : 'Received'}}</th>
                 <th style="width: 20%;"></th>
             </tr>
         </thead>
         <tbody class="align-middle">
             <tr *ngFor="let message of messages" 
-                routerLink="{{container === 'Outbox' ? '/members/' + message.recipientUsername : '/members/' + message.senderUsername}}">
+                routerLink="{{container === 'Outbox' ? '/members/' + message.recipientUsername : '/members/' + message.senderUsername}}"
+                [queryParams]="{tab: 'Messages'}">
                 <td>{{message.messageContent}}</td>
                 <td>
                     <div *ngIf="container === 'Outbox'">
