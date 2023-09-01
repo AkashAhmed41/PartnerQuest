@@ -13,7 +13,7 @@ export class MessagesComponent implements OnInit {
   pagination?: Pagination;
   pageNumber = 1;
   pageSize = 5;
-  container = 'Outbox';
+  container = 'Unread';
 
   constructor(private messageService: MessagesService) {
 

@@ -44,7 +44,7 @@
                 <ngx-gallery [options]="galleryOptions" [images]="galleryImages" class="ngx-gallery"></ngx-gallery>
             </tab>
             <tab heading="Messages">
-                <p>The feature is still to be implemented</p>
+                <app-member-messages [username]="member.userName"></app-member-messages>
             </tab>
         </tabset>
     </div>
