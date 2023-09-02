@@ -36,8 +36,8 @@ public class MessageRepository : IMessageRepository
     public async Task<IEnumerable<MessageDataflow>> GetMessagesThread(string currentUsername, string recipientUsername)
     {
         var messages = await _context.Messages.Include(msg => msg.Sender).ThenInclude(u => u.Photos).Where(msg => 
-            msg.SenderUsername == currentUsername && msg.RecipientUsername == recipientUsername ||
-            msg.RecipientUsername == currentUsername && msg.SenderUsername == recipientUsername
+            msg.SenderUsername == currentUsername && msg.SenderDeleted == false && msg.RecipientUsername == recipientUsername ||
+            msg.RecipientUsername == currentUsername && msg.RecipientDeleted == false && msg.SenderUsername == recipientUsername
         ).OrderBy(msg => msg.MessageSent).ToListAsync();
 
         var unreadMessages = messages.Where(msg => msg.MessageRead == null && msg.RecipientUsername == currentUsername).ToList();
@@ -58,9 +58,9 @@ public class MessageRepository : IMessageRepository
         var query = _context.Messages.OrderByDescending(msg => msg.MessageSent).AsQueryable();
         query = messagesPaginationParams.Container switch
         {
-            "Inbox" => query.Where(msg => msg.RecipientUsername == messagesPaginationParams.Username),
-            "Outbox" => query.Where(msg => msg.SenderUsername == messagesPaginationParams.Username),
-            _ => query.Where(msg => msg.RecipientUsername == messagesPaginationParams.Username && msg.MessageRead == null)
+            "Inbox" => query.Where(msg => msg.RecipientUsername == messagesPaginationParams.Username && msg.RecipientDeleted == false),
+            "Outbox" => query.Where(msg => msg.SenderUsername == messagesPaginationParams.Username && msg.SenderDeleted == false),
+            _ => query.Where(msg => msg.RecipientUsername == messagesPaginationParams.Username && msg.RecipientDeleted == false && msg.MessageRead == null)
         };
 
         var messages = query.ProjectTo<MessageDataflow>(_mapper.ConfigurationProvider);

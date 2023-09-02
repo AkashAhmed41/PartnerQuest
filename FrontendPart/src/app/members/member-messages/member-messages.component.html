@@ -15,14 +15,14 @@
                     <div class="chat-body">
                         <div class="header">
                             <small class="text-muted">
-                                <span class="fa fa-clock-o"> {{message.messageSent | timeago}}</span>
+                                <span class="fa fa-clock-o"> {{message.messageSent + 'Z' | timeago}}</span>
                                 <span class="text-danger" 
                                     *ngIf="!message.messageRead && message.senderUsername !== username">
                                     (Unread)
                                 </span>
                                 <span class="text-success" 
                                     *ngIf="message.messageRead && message.senderUsername !== username">
-                                    (Read {{message.messageRead | timeago}})
+                                    (Read {{message.messageRead + 'Z' | timeago}})
                                 </span>
                             </small>
                         </div>
