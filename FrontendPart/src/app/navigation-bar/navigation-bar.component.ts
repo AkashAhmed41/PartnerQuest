@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../_services/account.service';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-navigation-bar',
@@ -12,7 +11,7 @@ export class NavigationBarComponent implements OnInit {
   userData: any = {};
   // currentUser$: Observable<User | null> = of(null);
 
-  constructor (public accountService: AccountService, private router: Router, private toastr: ToastrService) {
+  constructor (public accountService: AccountService, private router: Router) {
 
   }
   ngOnInit(): void {
@@ -34,7 +33,6 @@ export class NavigationBarComponent implements OnInit {
       },
       error: error => {
         console.log(error);
-        this.toastr.error(error.error);
       }
     });
   }

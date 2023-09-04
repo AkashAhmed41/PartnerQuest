@@ -1,6 +1,8 @@
 using BackendWebApi.Database;
 using BackendWebApi.Extensions;
 using BackendWebApi.Middleware;
+using BackendWebApi.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,8 +30,9 @@ var services = scope.ServiceProvider;
 try 
 {
     var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<User>>();
     await context.Database.MigrateAsync();
-    await SeedData.SeedUsersData(context);
+    await SeedData.SeedUsersData(userManager);
 } catch (Exception ex)
 {
     var logger = services.GetRequiredService<ILogger<Program>>();

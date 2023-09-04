@@ -1,13 +1,10 @@
 using BackendWebApi.Extensions;
+using Microsoft.AspNetCore.Identity;
 
 namespace BackendWebApi.Models
 {
-    public class User
+    public class User : IdentityUser<int>
     {
-        public int Id { get; set; }
-        public string UserName { get; set; }
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }
         public DateOnly DateOfBirth { get; set; }
         public string Nickname { get; set; }
         public DateTime Created { get; set; } = DateTime.UtcNow;
@@ -23,6 +20,7 @@ namespace BackendWebApi.Models
         public List<FavouriteUsers> AddedFavouriteBy { get; set; }
         public List<Message> MessagesSent { get; set; }
         public List<Message> MessagesReceived { get; set; }
+        public ICollection<UserRole> UserRoles { get; set; }
 
         // public int GetAge() 
         // {

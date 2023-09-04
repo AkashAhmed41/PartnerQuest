@@ -477,3 +477,5 @@ $RECYCLE.BIN/
 *.lnk
 BackendWebApi/appsettings.json
 .vscode/settings.json
+BackendWebApi/PartnerQuest.db-shm
+BackendWebApi/PartnerQuest.db-wal

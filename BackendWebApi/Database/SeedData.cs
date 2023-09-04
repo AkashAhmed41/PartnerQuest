@@ -1,16 +1,15 @@
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using BackendWebApi.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackendWebApi.Database
 {
     public class SeedData
     {
-        public static async Task SeedUsersData(DataContext context)
+        public static async Task SeedUsersData(UserManager<User> userManager)
         {
-            if(await context.Users.AnyAsync()) return;
+            if(await userManager.Users.AnyAsync()) return;
 
             var userData = await File.ReadAllTextAsync("Database/UserSeedData.json");
             var options = new JsonSerializerOptions{PropertyNameCaseInsensitive = true};
@@ -18,14 +17,9 @@ namespace BackendWebApi.Database
 
             foreach (var user in users)
             {
-                using var hmac = new HMACSHA512();
                 user.UserName = user.UserName.ToLower();
-                user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Pa$$w0rd"));
-                user.PasswordSalt = hmac.Key;
-                context.Users.Add(user);
+                await userManager.CreateAsync(user, "Pa$$w0rd");
             }
-
-            await context.SaveChangesAsync();
         }
     }
 }
