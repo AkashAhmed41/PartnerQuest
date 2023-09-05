@@ -1,9 +1,8 @@
 using BackendWebApi.Models;
 
-namespace BackendWebApi.Interfaces
+namespace BackendWebApi.Interfaces;
+
+public interface ITokenService
 {
-    public interface ITokenService
-    {
-        string CreateToken(User user);
-    }
+    Task<string> CreateToken(User user);
 }

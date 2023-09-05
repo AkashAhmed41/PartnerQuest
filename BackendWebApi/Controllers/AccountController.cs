@@ -35,10 +35,13 @@ namespace BackendWebApi.Controllers
             var result = await _userManager.CreateAsync(user, registerDataflow.Password);
             if (!result.Succeeded) return BadRequest(result.Errors);
 
+            var roleResult = await _userManager.AddToRoleAsync(user, "Member");
+            if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
+
             return new UserDataflow
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user),
+                Token = await _tokenService.CreateToken(user),
                 Nickname = user.Nickname,
                 Gender = user.Gender
             };
@@ -60,7 +63,7 @@ namespace BackendWebApi.Controllers
             return new UserDataflow
             {
                 Username = user.UserName,
-                Token = _tokenService.CreateToken(user),
+                Token = await _tokenService.CreateToken(user),
                 PhotoUrl = user.Photos.FirstOrDefault(x => x.IsProfilePhoto)?.PhotoUrl,
                 Nickname = user.Nickname,
                 Gender = user.Gender

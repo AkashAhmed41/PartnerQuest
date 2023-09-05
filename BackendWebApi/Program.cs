@@ -31,8 +31,9 @@ try
 {
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<User>>();
+    var roleManager = services.GetRequiredService<RoleManager<Role>>();
     await context.Database.MigrateAsync();
-    await SeedData.SeedUsersData(userManager);
+    await SeedData.SeedUsersData(userManager, roleManager);
 } catch (Exception ex)
 {
     var logger = services.GetRequiredService<ILogger<Program>>();
