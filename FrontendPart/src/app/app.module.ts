@@ -27,6 +27,8 @@ import { DatePickerComponent } from './_forms/date-picker/date-picker.component'
 import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { HasRoleDirective } from './_directives/has-role.directive';
+import { ManageUsersComponent } from './admin/manage-users/manage-users.component';
+import { ManageUserPhotosComponent } from './admin/manage-user-photos/manage-user-photos.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +50,9 @@ import { HasRoleDirective } from './_directives/has-role.directive';
     DatePickerComponent,
     MemberMessagesComponent,
     AdminPanelComponent,
-    HasRoleDirective
+    HasRoleDirective,
+    ManageUsersComponent,
+    ManageUserPhotosComponent
   ],
   imports: [
     BrowserAnimationsModule,
