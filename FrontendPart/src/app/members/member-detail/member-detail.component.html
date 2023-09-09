@@ -3,6 +3,9 @@
         <div class="card">
             <img src="{{ member.profilePhotoUrl || './assets/user.png' }}" alt="{{ member.nickname }}" class="card-img-top img-thumbnail">
             <div class="card-body">
+                <div class="mb-2" *ngIf="(presenceService.activeUsers$ | async)?.includes(member.userName)">
+                    <i class="class fa fa-user me-2" style="color: rgb(1, 189, 42);"></i>Active Now
+                </div>
                 <div>
                     <strong>Location: </strong>
                     <p>{{member.city}}, {{member.country}}</p>

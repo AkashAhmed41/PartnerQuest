@@ -2,6 +2,7 @@ using BackendWebApi.Database;
 using BackendWebApi.Helpers;
 using BackendWebApi.Interfaces;
 using BackendWebApi.Services;
+using BackendWebApi.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BackendWebApi.Extensions
@@ -25,6 +26,7 @@ namespace BackendWebApi.Extensions
             services.AddScoped<IFavouriteRepository, FavouriteRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddSignalR();
+            services.AddSingleton<ActiveStatusTracker>();
 
             return services;
         }

@@ -5,6 +5,7 @@ import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { Member } from 'src/app/_models/member';
 import { Message } from 'src/app/_models/message';
 import { MessagesService } from 'src/app/_services/messages.service';
+import { PresenceService } from 'src/app/_services/presence.service';
 
 @Component({
   selector: 'app-member-detail',
@@ -19,7 +20,7 @@ export class MemberDetailComponent implements OnInit {
   activatedTab?: TabDirective;
   messages: Message[] = [];
 
-  constructor(private route: ActivatedRoute, private messageService: MessagesService) {
+  constructor(private route: ActivatedRoute, private messageService: MessagesService, public presenceService: PresenceService) {
 
   }
   ngOnInit(): void {
