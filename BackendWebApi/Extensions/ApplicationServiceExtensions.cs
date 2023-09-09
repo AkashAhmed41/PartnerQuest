@@ -24,6 +24,7 @@ namespace BackendWebApi.Extensions
             services.AddScoped<TrackUserActivity>();
             services.AddScoped<IFavouriteRepository, FavouriteRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddSignalR();
 
             return services;
         }
