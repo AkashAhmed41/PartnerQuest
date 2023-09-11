@@ -23,14 +23,29 @@ public class MessageRepository : IMessageRepository
         _context.Messages.Add(message);
     }
 
+    public void AddNewGroup(SignalRGroup group)
+    {
+        _context.MessagesGroups.Add(group);
+    }
+
     public void DeleteMessage(Message message)
     {
         _context.Messages.Remove(message);
     }
 
+    public async Task<SignalRConnection> GetConnection(string connectionId)
+    {
+        return await _context.Connections.FindAsync(connectionId);
+    }
+
     public async Task<Message> GetMessage(int id)
     {
         return await _context.Messages.FindAsync(id);
+    }
+
+    public async Task<SignalRGroup> GetMessageGroup(string groupName)
+    {
+        return await _context.MessagesGroups.Include(x => x.Connections).FirstOrDefaultAsync(x => x.Name == groupName);
     }
 
     public async Task<IEnumerable<MessageDataflow>> GetMessagesThread(string currentUsername, string recipientUsername)
@@ -65,6 +80,11 @@ public class MessageRepository : IMessageRepository
 
         var messages = query.ProjectTo<MessageDataflow>(_mapper.ConfigurationProvider);
         return await PaginatedList<MessageDataflow>.CreatePageAsync(messages, messagesPaginationParams.PageNumber, messagesPaginationParams.PageSize);
+    }
+
+    public void RemoveConnection(SignalRConnection signalRConnection)
+    {
+        _context.Connections.Remove(signalRConnection);
     }
 
     public async Task<bool> SaveAllAsync()

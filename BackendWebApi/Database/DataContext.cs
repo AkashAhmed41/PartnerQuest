@@ -14,6 +14,8 @@ namespace BackendWebApi.Database
 
         public DbSet<FavouriteUsers> FavouriteUsersDb { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<SignalRGroup> MessagesGroups { get; set; }
+        public DbSet<SignalRConnection> Connections { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
