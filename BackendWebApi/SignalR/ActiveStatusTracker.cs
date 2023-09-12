@@ -4,8 +4,9 @@ public class ActiveStatusTracker
 {
     private static readonly Dictionary<string, List<string>> ActiveUsers = new Dictionary<string, List<string>>();
 
-    public Task UserIsConnected (string username, string connectionId)
+    public Task<bool> UserIsConnected (string username, string connectionId)
     {
+        bool userIsConnected = false;
         lock(ActiveUsers)
         {
             if (ActiveUsers.ContainsKey(username))
@@ -15,26 +16,29 @@ public class ActiveStatusTracker
             else
             {
                 ActiveUsers.Add(username, new List<string>{connectionId});
+                userIsConnected = true;
             }
         }
 
-        return Task.CompletedTask;
+        return Task.FromResult(userIsConnected);
     }
 
-    public Task UserIsDisconnected (string username, string connectionId) 
+    public Task<bool> UserIsDisconnected (string username, string connectionId) 
     {
+        bool userIsDisconnected = false;
         lock(ActiveUsers)
         {
-            if (!ActiveUsers.ContainsKey(username)) return Task.CompletedTask;
+            if (!ActiveUsers.ContainsKey(username)) return Task.FromResult(userIsDisconnected);
             ActiveUsers[username].Remove(connectionId);
 
             if (ActiveUsers[username].Count == 0)
             {
                 ActiveUsers.Remove(username);
+                userIsDisconnected = true;
             }
         }
 
-        return Task.CompletedTask;
+        return Task.FromResult(userIsDisconnected);
     }
 
     public Task<string[]> GetActiveUsers()
@@ -46,5 +50,16 @@ public class ActiveStatusTracker
         }
 
         return Task.FromResult(currentlyActiveUsers);
+    }
+
+    public static Task<List<string>> GetUserConnections (string username)
+    {
+        List<string> connectionIds;
+        lock(ActiveUsers)
+        {
+            connectionIds = ActiveUsers.GetValueOrDefault(username);
+        }
+
+        return Task.FromResult(connectionIds);
     }
 }

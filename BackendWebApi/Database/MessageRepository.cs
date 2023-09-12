@@ -38,6 +38,13 @@ public class MessageRepository : IMessageRepository
         return await _context.Connections.FindAsync(connectionId);
     }
 
+    public async Task<SignalRGroup> GetGroupFromConnection(string connectionId)
+    {
+        return await _context.MessagesGroups.Include(x => x.Connections)
+            .Where(x => x.Connections.Any(x => x.ConnectionId == connectionId))
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<Message> GetMessage(int id)
     {
         return await _context.Messages.FindAsync(id);

@@ -16,4 +16,5 @@ public interface IMessageRepository
     void RemoveConnection(SignalRConnection signalRConnection);
     Task<SignalRConnection> GetConnection(string connectionId);
     Task<SignalRGroup> GetMessageGroup(string groupName);
+    Task<SignalRGroup> GetGroupFromConnection(string connectionId);
 }
