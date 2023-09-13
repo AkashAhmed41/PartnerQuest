@@ -57,22 +57,21 @@ public class MessageRepository : IMessageRepository
 
     public async Task<IEnumerable<MessageDataflow>> GetMessagesThread(string currentUsername, string recipientUsername)
     {
-        var messages = await _context.Messages.Include(msg => msg.Sender).ThenInclude(u => u.Photos).Where(msg => 
+        var query = _context.Messages.Where(msg => 
             msg.SenderUsername == currentUsername && msg.SenderDeleted == false && msg.RecipientUsername == recipientUsername ||
             msg.RecipientUsername == currentUsername && msg.RecipientDeleted == false && msg.SenderUsername == recipientUsername
-        ).OrderBy(msg => msg.MessageSent).ToListAsync();
+        ).OrderBy(msg => msg.MessageSent).AsQueryable();
 
-        var unreadMessages = messages.Where(msg => msg.MessageRead == null && msg.RecipientUsername == currentUsername).ToList();
+        var unreadMessages = query.Where(msg => msg.MessageRead == null && msg.RecipientUsername == currentUsername).ToList();
         if (unreadMessages.Any())
         {
             foreach (var message in unreadMessages)
             {
                 message.MessageRead = DateTime.UtcNow;
             }
-            await _context.SaveChangesAsync();
         }
         
-        return _mapper.Map<IEnumerable<MessageDataflow>>(messages);
+        return await query.ProjectTo<MessageDataflow>(_mapper.ConfigurationProvider).ToListAsync();
     }
 
     public async Task<PaginatedList<MessageDataflow>> GetUsersMessages(MessagesPaginationParams messagesPaginationParams)
@@ -94,8 +93,4 @@ public class MessageRepository : IMessageRepository
         _context.Connections.Remove(signalRConnection);
     }
 
-    public async Task<bool> SaveAllAsync()
-    {
-        return await _context.SaveChangesAsync() > 0;
-    }
 }

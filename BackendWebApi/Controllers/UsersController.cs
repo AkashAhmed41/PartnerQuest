@@ -12,28 +12,28 @@ namespace BackendWebApi.Controllers
     [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IPhotoService _photoService;
-        public UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService)
+        private readonly IUnitOfWork _unitOfWork;
+        public UsersController(IUnitOfWork unitOfWork, IMapper mapper, IPhotoService photoService)
         {
+            _unitOfWork = unitOfWork;
             _photoService = photoService;
             _mapper = mapper;
-            _userRepository = userRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<PaginatedList<MemberDataflow>>> GetAllUsers([FromQuery]UserParamsForPagination userParamsForPagination)
         {
-            var currentUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
-            userParamsForPagination.CurrentUsername = currentUser.UserName;
+            var gender = await _unitOfWork.UserRepository.GetUserGender(User.GetUsername());
+            userParamsForPagination.CurrentUsername = User.GetUsername();
 
             if (string.IsNullOrEmpty(userParamsForPagination.Gender))
             {
-                userParamsForPagination.Gender = currentUser.Gender == "male" ? "female" : "male";
+                userParamsForPagination.Gender = gender == "male" ? "female" : "male";
             }
 
-            var users = await _userRepository.GetMembersAsync(userParamsForPagination);
+            var users = await _unitOfWork.UserRepository.GetMembersAsync(userParamsForPagination);
             Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
             return Ok(users);
         }
@@ -41,17 +41,17 @@ namespace BackendWebApi.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDataflow>> GetUser(string username)
         {
-            return await _userRepository.GetMemberAsync(username);
+            return await _unitOfWork.UserRepository.GetMemberAsync(username);
         }
 
         [HttpPut]
         public async Task<ActionResult> EditMemberInfo(EditMemberInfoDataflow editMemberInfoDataflow)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
             if (user ==  null) return NotFound("User not found!");
 
             _mapper.Map(editMemberInfoDataflow, user);
-            if (await _userRepository.SaveAllAsync()) return NoContent();
+            if (await _unitOfWork.Complete()) return NoContent();
 
             return BadRequest("There was nothing to update!");
         }
@@ -59,7 +59,7 @@ namespace BackendWebApi.Controllers
         [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoDataflow>> AddPhoto(IFormFile file)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
             if (user == null) return NotFound();
 
             var result = await _photoService.AddPhotoAsync(file);
@@ -73,7 +73,7 @@ namespace BackendWebApi.Controllers
             if (user.Photos.Count == 0) photo.IsProfilePhoto = true;
             user.Photos.Add(photo);
 
-            if (await _userRepository.SaveAllAsync()) 
+            if (await _unitOfWork.Complete()) 
             {
                 return CreatedAtAction(nameof(GetUser), new {username = user.UserName}, _mapper.Map<PhotoDataflow>(photo));
             }
@@ -84,7 +84,7 @@ namespace BackendWebApi.Controllers
         [HttpPut("set-profile-photo/{photoId}")]
         public async Task<ActionResult> SettingProfilePhoto(int photoId)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
             if (user == null) return NotFound();
 
             var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
@@ -96,14 +96,14 @@ namespace BackendWebApi.Controllers
             if (currentProfilePhoto != null) currentProfilePhoto.IsProfilePhoto = false;
             photo.IsProfilePhoto = true;
 
-            if (await _userRepository.SaveAllAsync()) return NoContent();
+            if (await _unitOfWork.Complete()) return NoContent();
             return BadRequest("An unknown problem occurred while setting up your Profile Photo!");
         }
 
         [HttpDelete("delete-photo/{photoId}")]
         public async Task<ActionResult> DeletePhoto(int photoId)
         {
-            var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+            var user = await _unitOfWork.UserRepository.GetUserByUsernameAsync(User.GetUsername());
 
             var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
             if (photo == null) return NotFound();
@@ -117,7 +117,7 @@ namespace BackendWebApi.Controllers
             }
 
             user.Photos.Remove(photo);
-            if (await _userRepository.SaveAllAsync()) return Ok();
+            if (await _unitOfWork.Complete()) return Ok();
 
             return BadRequest("An unknown problem occurred while deleting the Photo!");
         }

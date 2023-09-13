@@ -11,7 +11,6 @@ public interface IMessageRepository
     Task<Message> GetMessage(int id);
     Task<PaginatedList<MessageDataflow>> GetUsersMessages(MessagesPaginationParams messagesPaginationParams);
     Task<IEnumerable<MessageDataflow>> GetMessagesThread(string currentUsername, string recipientUsername);
-    Task<bool> SaveAllAsync();
     void AddNewGroup(SignalRGroup group);
     void RemoveConnection(SignalRConnection signalRConnection);
     Task<SignalRConnection> GetConnection(string connectionId);

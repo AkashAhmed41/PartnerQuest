@@ -18,15 +18,13 @@ namespace BackendWebApi.Extensions
 
             services.AddCors();
             services.AddScoped<ITokenService, TokenService>();
-            services.AddScoped<IUserRepository, UserRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<CloudinarySettings>(configuration.GetSection("CloudinarySettings"));
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddScoped<TrackUserActivity>();
-            services.AddScoped<IFavouriteRepository, FavouriteRepository>();
-            services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddSignalR();
             services.AddSingleton<ActiveStatusTracker>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

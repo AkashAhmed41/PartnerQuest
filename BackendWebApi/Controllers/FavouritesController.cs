@@ -9,25 +9,24 @@ namespace BackendWebApi.Controllers;
 
 public class FavouritesController : BaseApiController
 {
-    private readonly IFavouriteRepository _favouriteRepository;
-    private readonly IUserRepository _userRepository;
-    public FavouritesController(IUserRepository userRepository, IFavouriteRepository favouriteRepository)
+    private readonly IUnitOfWork _unitOfWork;
+    public FavouritesController(IUnitOfWork unitOfWork)
     {
-        _userRepository = userRepository;
-        _favouriteRepository = favouriteRepository;
+        _unitOfWork = unitOfWork;
+        
     }
 
     [HttpPost("{username}")]
     public async Task<ActionResult> AddFavourite(string username)
     {
         var sourceUserId = User.GetUserId();
-        var addedFavouriteUser = await _userRepository.GetUserByUsernameAsync(username);
-        var sourceUser = await _favouriteRepository.GetUserWithFavourite(sourceUserId);
+        var addedFavouriteUser = await _unitOfWork.UserRepository.GetUserByUsernameAsync(username);
+        var sourceUser = await _unitOfWork.FavouriteRepository.GetUserWithFavourite(sourceUserId);
 
         if (addedFavouriteUser == null) return NotFound();
         if (sourceUser.UserName == username) return BadRequest("You cannot add yourself as a favourite user!");
 
-        var addFavouriteUser = await _favouriteRepository.GetFavouriteUser(sourceUserId, addedFavouriteUser.Id);
+        var addFavouriteUser = await _unitOfWork.FavouriteRepository.GetFavouriteUser(sourceUserId, addedFavouriteUser.Id);
         if (addFavouriteUser != null) return BadRequest("You've already added this user as Favourite!");
 
         addFavouriteUser = new FavouriteUsers
@@ -37,7 +36,7 @@ public class FavouritesController : BaseApiController
         };
         sourceUser.AddedFavouriteUsers.Add(addFavouriteUser);
 
-        if (await _userRepository.SaveAllAsync()) return Ok();
+        if (await _unitOfWork.Complete()) return Ok();
 
         return BadRequest("Failed to add as Favourite!");
     }
@@ -46,7 +45,7 @@ public class FavouritesController : BaseApiController
     public async Task<ActionResult<PaginatedList<FavouriteDataflow>>> GetFavouriteUserList([FromQuery]FavouritesPaginationParams favouritesPaginationParams)
     {
         favouritesPaginationParams.UserId = User.GetUserId();
-        var users = await _favouriteRepository.GetFavouriteUsersList(favouritesPaginationParams);
+        var users = await _unitOfWork.FavouriteRepository.GetFavouriteUsersList(favouritesPaginationParams);
 
         Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages));
 
