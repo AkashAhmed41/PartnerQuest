@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxGalleryAnimation, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { take } from 'rxjs';
@@ -25,7 +25,7 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   user?: User;
 
   constructor(private route: ActivatedRoute, private messageService: MessagesService, 
-    public presenceService: PresenceService, private accountService: AccountService) {
+    public presenceService: PresenceService, private accountService: AccountService, private router: Router) {
       this.accountService.currentUser$.pipe(take(1)).subscribe({
         next: user => {
           if (user) this.user = user;
@@ -75,7 +75,21 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
       this.messageService.createHubConnection(this.user, this.member.userName)
     } else {
       this.messageService.stopHubConnection();
+      this.removeTabInfo();
     }
+  }
+
+  removeTabInfo() {
+    const currentUrl = this.router.url;
+    const urlTree = this.router.parseUrl(currentUrl);
+    const queryParams = { ...urlTree.queryParams };
+    
+    if (queryParams['tab']) {
+      delete queryParams['tab'];
+    }
+
+    const newUrl = this.router.createUrlTree([], queryParams).toString();
+    this.router.navigateByUrl(newUrl);
   }
 
   loadMessagesThread() {
