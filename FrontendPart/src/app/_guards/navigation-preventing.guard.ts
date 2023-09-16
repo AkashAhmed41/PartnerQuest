@@ -1,14 +1,19 @@
 import { Injectable } from '@angular/core';
 import { CanDeactivate } from '@angular/router';
 import { EditMemberComponent } from '../members/edit-member/edit-member.component';
+import { ConfirmationService } from '../_services/confirmation.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NavigationPreventingGuard implements CanDeactivate<EditMemberComponent> {
-  canDeactivate(component: EditMemberComponent): boolean {
+
+  constructor(private confirmationService: ConfirmationService) {}
+
+  canDeactivate(component: EditMemberComponent): Observable<boolean> | boolean {
     if(component.editForm?.dirty) {
-      return confirm('Any unsaved changes will be lost! Do you really want to leave the page?');
+      return this.confirmationService.confirm();
     }
     return true;
   }

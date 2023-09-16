@@ -35,7 +35,8 @@ public class SeedData
 
         var admin = new User
         {
-            UserName = "admin"
+            UserName = "admin",
+            Nickname = "Administrator"
         };
         await userManager.CreateAsync(admin, "Pa$$w0rd");
         await userManager.AddToRolesAsync(admin, new[] {"Admin", "Moderator"});

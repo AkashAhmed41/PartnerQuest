@@ -4,7 +4,11 @@
             <strong>No Messages yet! Start a conversation using the Message Box below...</strong>
         </div>
 
-        <ul *ngIf="(messageService.messagesThread$ | async)!.length > 0" class="chat">
+        <ul 
+            #enableScrolling
+            style="overflow: scroll; height: 600px;"
+            [scrollTop]="enableScrolling.scrollHeight"
+            *ngIf="(messageService.messagesThread$ | async)!.length > 0" class="chat">
             <li *ngFor="let message of (messageService.messagesThread$ | async)">
                 <div>
                     <span class="chat-img float-end">
@@ -15,7 +19,14 @@
                     <div class="chat-body">
                         <div class="header">
                             <small class="text-muted">
-                                <span class="fa fa-clock-o"> {{message.messageSent | timeago}}</span>
+                                <span class="fa fa-clock-o"
+                                    *ngIf="message.senderUsername !== username">
+                                     Sent {{message.messageSent | timeago}}
+                                </span>
+                                <span class="fa fa-clock-o"
+                                    *ngIf="message.senderUsername === username">
+                                     Received {{message.messageSent | timeago}}
+                                </span>
                                 <span class="text-danger" 
                                     *ngIf="!message.messageRead && message.senderUsername !== username">
                                     (Unread)

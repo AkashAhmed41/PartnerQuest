@@ -2,11 +2,13 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxGalleryAnimation, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
+import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs';
 import { Member } from 'src/app/_models/member';
 import { Message } from 'src/app/_models/message';
 import { User } from 'src/app/_models/user';
 import { AccountService } from 'src/app/_services/account.service';
+import { MembersService } from 'src/app/_services/members.service';
 import { MessagesService } from 'src/app/_services/messages.service';
 import { PresenceService } from 'src/app/_services/presence.service';
 
@@ -25,7 +27,8 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   user?: User;
 
   constructor(private route: ActivatedRoute, private messageService: MessagesService, 
-    public presenceService: PresenceService, private accountService: AccountService, private router: Router) {
+    public presenceService: PresenceService, private accountService: AccountService, 
+    private router: Router, private memberService: MembersService, private toastr: ToastrService) {
       this.accountService.currentUser$.pipe(take(1)).subscribe({
         next: user => {
           if (user) this.user = user;
@@ -111,6 +114,12 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
       })
     }
     return imageUrls;
+  }
+
+  addToFavourite(member: Member) {
+    this.memberService.addToFavourite(member.userName).subscribe({
+      next: () => this.toastr.success(member.nickname + ` has been successfully added to your Favourite!`)
+    });
   }
 
 }

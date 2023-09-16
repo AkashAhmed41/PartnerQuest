@@ -29,6 +29,7 @@ export class NavigationBarComponent implements OnInit {
     this.accountService.login(this.userData).subscribe({
       next: response => {
         this.router.navigateByUrl('/members');
+        this.userData = {};
         console.log(response);
       },
       error: error => {
