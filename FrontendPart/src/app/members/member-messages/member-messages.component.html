@@ -1,14 +1,13 @@
 <div class="card">
-    <div class="card-body">
+    <div class="card-body"
+            #enableScrolling
+            style="overflow: scroll; height: 550px;"
+            [scrollTop]="enableScrolling.scrollHeight">
         <div *ngIf="(messageService.messagesThread$ | async)?.length === 0">
             <strong>No Messages yet! Start a conversation using the Message Box below...</strong>
         </div>
 
-        <ul 
-            #enableScrolling
-            style="overflow: scroll; height: 600px;"
-            [scrollTop]="enableScrolling.scrollHeight"
-            *ngIf="(messageService.messagesThread$ | async)!.length > 0" class="chat">
+        <ul *ngIf="(messageService.messagesThread$ | async)!.length > 0" class="chat">
             <li *ngFor="let message of (messageService.messagesThread$ | async)">
                 <div>
                     <span class="chat-img float-end">

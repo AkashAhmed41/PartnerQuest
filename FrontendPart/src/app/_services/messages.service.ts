@@ -7,6 +7,7 @@ import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { User } from '../_models/user';
 import { BehaviorSubject, take } from 'rxjs';
 import { MessageGroup } from '../_models/messageGroup';
+import { LoadingIndicatorService } from './loading-indicator.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +19,10 @@ export class MessagesService {
   private messagesThreadSource = new BehaviorSubject<Message[]>([]);
   messagesThread$ = this.messagesThreadSource.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private loadingService: LoadingIndicatorService) { }
 
   createHubConnection(user: User, otherUsername: string) {
+    this.loadingService.requestIncoming();
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(this.hubUrl + 'messages?username=' + otherUsername, {
         accessTokenFactory: () => user.token
@@ -28,7 +30,9 @@ export class MessagesService {
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.start().catch(error => console.log(error));
+    this.hubConnection.start()
+      .catch(error => console.log(error))
+      .finally(() => this.loadingService.requestCompleted());
 
     this.hubConnection.on('ReceiveMessagesThread', messages => {
       this.messagesThreadSource.next(messages);
@@ -60,6 +64,7 @@ export class MessagesService {
 
   stopHubConnection() {
     if (this.hubConnection) {
+      this.messagesThreadSource.next([]);
       this.hubConnection.stop().catch(err => console.log(err));
     }
   }
