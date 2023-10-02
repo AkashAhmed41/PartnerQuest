@@ -1,7 +1,24 @@
 # PartnerQuest
-PartnerQuest is a web application designed to bring people together, create meaningful connections and help individuals find their ideal partner. Your journey to find meaningful connection begins here.
+PartnerQuest is a web application project designed to bring people together, create meaningful connections and help individuals find their ideal partner. Your journey to find meaningful connection begins here.
 
-Technologies that have been used to build the web application are ***Angular 15***, ***.NET 7.0***, ***SignalR***, ***SQLite Database*** and ***Entity Framework Core***. *Microsoft Identity* has also been introduced in this project. Authentication and Authorization are handled by using ***JWT***.
+Technologies that have been used to build the web application are ***Angular 15***, ***.NET 7.0***, ***Bootstrap 5***, ***SignalR***, ***SQLite Database*** and ***Entity Framework Core***. *Microsoft Identity* has also been introduced in this project. Authentication and Authorization are handled by using ***JWT***.
+
+## Functionalities Implemented in **PartnerQuest**
+- User Registration system using **Reactive forms** of Angular. Persistent Login using **JSON Web Token (JWT)** Authorization.
+- Quick Profile Card to show user informations.
+- **Active Status Tracker** to show whether a user is active or not at any point of time. It also tracks the **Last Active** property of a user.
+- Editing Own Profile info. Leaving the edit profile page with unsaved changes is also prevented using **Route Guards**.
+- Photo Gallery and Photo Upload and Deleting functionality with the facility of setting a photo as the user's Profile Photo.
+- Adding other users in one's **Favourite List**. Sending Toastr notification to the added user in such case.
+- **Real-time Messaging** functionality between users using **SignalR**. Keeping track of messages being **Read** or staying **Unread**.
+- **Toastr** notification on the arrival of new message from any user.
+- **Sorting and Filtering** data depending on various parameters. **Pagination** for vast amount of data.
+- **Role Management** is also implemented for the **admin** user.
+
+
+## Project's Working Demo
+https://github.com/AkashAhmed41/PartnerQuest/assets/86203010/f31e4104-e582-4f90-955f-de1d5d58eca8
+
 ## Installation & Starting Instructions
 As a developer if you want to create a copy of the full working web application in your local machine, follow the instructions below:
 ### Prerequisites
